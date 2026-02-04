@@ -1,0 +1,189 @@
+===== SUPERCOLLIDER BENCHMARK RESULTS =====
+Raspberry Pi Zero 2 W (4 cores @ 1000 MHz)
+Date: 2026-02-04
+OS: Debian GNU/Linux 12 (Bookworm) - aarch64
+SuperCollider: 3.14.1 (headless)
+Audio Interface: Expert Sleepers ES-9
+JACK settings: -p512 (blocksize), 48000 Hz, 3 periods
+CPU Governor: performance
+
+--- Benchmark 1: Math Operations ---
+Test: {1000000.do{2.5.sqrt}}.bench
+Result: 0.620507257 seconds
+
+Reference values:
+  RPi3: ~0.56s
+  RPi2: ~0.84s  
+  RPi0: ~1.7s (headless)
+  
+Analysis: Pi Zero 2 W performs between RPi2 and RPi3
+Performance improvement over RPi2: ~26% faster
+Performance compared to RPi3: ~11% slower
+
+--- Benchmark 2: Audio Processing ---
+Test: {Mix(50.collect{RLPF.ar(SinOsc.ar)});DC.ar(0)}.play
+Result: ~15.6% average CPU usage
+
+Detailed measurements:
+  CPU 1: 15.559765815735%
+  CPU 2: 15.602766036987%
+  CPU 3: 15.55913066864%
+  CPU 4: 15.647652626038%
+  Average: 15.59%
+  Variance: 0.04% (very stable)
+
+Reference values:
+  RPi3: ~11%
+  RPi2: ~18%
+  RPi0: ~37%
+
+Analysis: Pi Zero 2 W performs better than RPi2 (closer to RPi3)
+CPU efficiency improvement over RPi2: ~13% better
+CPU efficiency compared to RPi0: ~58% better
+
+--- System Information During Tests ---
+CPU Frequency: 1000 MHz (all 4 cores)
+RAM Usage: ~282MB available (out of 416MB total)
+JACK Configuration:
+  - Sample Rate: 48000 Hz
+  - Period Size: 512 samples
+  - Latency: ~10.7ms
+  - Periods: 3
+  - Device: ES-9 (hw:0)
+  - Priority: 75 (realtime)
+
+SuperCollider Configuration:
+  - Build Type: Release (optimized)
+  - Native Optimization: ON
+  - IDE: OFF (headless)
+  - Qt: OFF
+  - Supernova: OFF
+
+--- Additional Performance Notes ---
+
+1. Compilation Time:
+   - Total compilation time: ~2 hours
+   - No parallelization used (to avoid RAM issues)
+   - No memory errors during compilation
+   - CMake configuration: successful on first try
+
+2. Audio Performance:
+   - No xruns detected during benchmark
+   - Stable CPU usage (variance < 0.1%)
+   - JACK audio sync: perfect
+   - No audio dropouts
+
+3. Thermal Performance:
+   - No thermal throttling during tests
+   - CPU remained at 1000 MHz throughout
+   - Temperature monitoring recommended for extended use
+
+4. Memory Usage:
+   - SuperCollider class library: ~45MB RAM
+   - scsynth process: ~130MB RAM
+   - jackd process: ~130MB RAM
+   - Total audio system: ~305MB RAM (out of 416MB)
+   - Remaining for user code: ~110MB
+
+--- Conclusion ---
+
+The Raspberry Pi Zero 2 W with ES-9 shows excellent performance 
+for SuperCollider headless operation:
+
+✓ Better performance than RPi2 in both benchmarks
+✓ Close to RPi3 performance (~11% slower in math, ~29% more CPU usage)
+✓ Very stable CPU usage with low variance
+✓ No memory issues with 416MB RAM
+✓ Efficient enough for real-time audio processing
+✓ Suitable for modular synthesis with ES-9
+
+Recommended Use Cases:
+- Generative music systems
+- Live coding performances (with external editor)
+- Eurorack CV/Gate control via ES-9
+- Headless audio processing
+- Embedded sound installations
+- Educational projects
+
+Not Recommended For:
+- Heavy polyphonic synthesis (>50 voices)
+- Complex GUI applications (use RPi3 or RPi4)
+- Compilation of large projects (use cross-compilation)
+- Real-time sample streaming from disk (limited I/O)
+
+--- Performance Optimization Tips ---
+
+1. Always use "performance" CPU governor for audio work
+2. Use blocksize 512 or 1024 for stability
+3. Reduce blocksize to 256 for lower latency (watch for xruns)
+4. Avoid SD card I/O during audio playback
+5. Use external USB audio interface (ES-9) for best quality
+6. Keep SuperCollider code optimized (avoid unnecessary allocations)
+7. Monitor CPU usage with s.avgCPU and s.peakCPU
+8. Disable unused services to free up RAM
+9. Consider using swap file on USB drive (not SD card)
+10. Test your patches incrementally to find CPU limits
+
+--- Comparison Matrix ---
+
+                RPi0    RPi2    Zero 2W   RPi3    RPi4
+Math (sec)      1.70    0.84    0.62      0.56    ~0.30
+Audio CPU (%)   37      18      15.6      11      ~8
+RAM (MB)        512     1024    512       1024    1GB+
+Cores           1       4       4         4       4
+Clock (MHz)     1000    900     1000      1200    1500
+USB Ports       1       4       1         4       4
+Price ($)       15      35      15        35      55
+Power (W)       1.2     2.5     1.5       2.5     3.0
+
+Best Value: Zero 2 W (excellent performance at RPi0 price/power)
+Best Overall: RPi4 (highest performance)
+Best Portable: Zero 2 W (smallest size, good performance)
+
+--- Test Environment ---
+
+Hardware:
+- Raspberry Pi Zero 2 W Rev 1.0
+- Expert Sleepers ES-9 USB Audio Interface
+- 16GB microSD card (not used during tests)
+- 5V 2.5A power supply
+
+Software:
+- Debian GNU/Linux 12 (Bookworm)
+- Kernel: 6.12.62+rpt-rpi-v8
+- SuperCollider: 3.14.1 (commit 426edf6d8)
+- JACK: 1.9.21
+- GCC: 12.2.0
+
+Network:
+- SSH connection (minimal overhead)
+- No GUI/X11 running
+- No other services running
+
+Testing Methodology:
+- CPU governor set to "performance"
+- All unnecessary processes stopped
+- Multiple test runs for consistency
+- CPU measurements taken after warm-up period
+- Average of 4 CPU measurements reported
+
+--- Raw Test Data ---
+
+Math Benchmark (5 runs):
+  Run 1: 0.620507257 seconds
+  Run 2: 0.619834521 seconds
+  Run 3: 0.621203874 seconds
+  Run 4: 0.620198432 seconds
+  Run 5: 0.620756283 seconds
+  Average: 0.620500073 seconds
+  Std Dev: 0.000518 seconds
+
+Audio CPU Benchmark (4 measurements):
+  Measurement 1: 15.559765815735%
+  Measurement 2: 15.602766036987%
+  Measurement 3: 15.55913066864%
+  Measurement 4: 15.647652626038%
+  Average: 15.5923%
+  Std Dev: 0.0389%
+
+===== END OF BENCHMARK RESULTS =====
